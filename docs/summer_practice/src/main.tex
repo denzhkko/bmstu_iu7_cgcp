@@ -1,0 +1,74 @@
+\documentclass[14pt]{extreport} % report support only 10, 11, 12 font sizes.
+                                % This is why extreport used.
+
+%Russian-specific packages
+%--------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{cmap}
+%--------------------------------------
+
+%Hyperlinks
+%--------------------------------------
+\usepackage{hyperref}
+%--------------------------------------
+
+%List geometry
+%--------------------------------------
+\usepackage[left=2cm, right=2cm, top=2cm, bottom=2cm, bindingoffset=0cm]{geometry}
+%--------------------------------------
+
+%Listing for code
+%--------------------------------------
+\usepackage{listings}
+%--------------------------------------
+
+%Chapter format
+%--------------------------------------
+\usepackage{titlesec, blindtext}
+\newcommand{\hsp}{\hspace{20pt}} % line length 20pt
+\titleformat{\chapter}[hang]{\huge\bfseries}{\thechapter\hsp}{0pt}{\huge\bfseries}
+%--------------------------------------
+
+%Bibliography
+%--------------------------------------
+\usepackage{biblatex} %Imports biblatex package
+\addbibresource{90-sources.bib}
+%--------------------------------------
+
+%For titul
+%--------------------------------------
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+\usepackage{tabularx} % in the preamble
+\usepackage[normalem]{ulem}
+%--------------------------------------
+
+
+\nocite{*} % list all bibliography entries without citing
+
+\title{summer practise}
+\author{Денис Недолужко}
+\date{September 2021}
+
+\begin{document}
+
+\include{00-title}
+
+\pagenumbering{gobble} % remove page numbering
+
+\include{01-individual}
+
+\clearpage\pagenumbering{arabic} % set page numbering
+
+\tableofcontents
+
+\include{10-introduction}
+\include{20-analysis}
+\include{30-design}
+% \include{40-technological}
+\include{50-conclusion}
+
+\printbibliography
+
+\end{document}
