@@ -2,6 +2,7 @@
 
 #include <QGraphicsScene>
 #include <QMainWindow>
+#include <QProgressDialog>
 #include <memory>  // unique_ptr, shared_ptr
 
 QT_BEGIN_NAMESPACE
@@ -18,13 +19,17 @@ class main_window : public QMainWindow {
 
  private slots:
   void on_pb_draw_clicked();
-  void uidraw(QImage image);
+
+  void draw_img(QImage image);
+  void change_progress(double progress);
 
  signals:
-  void sss(QImage image);
+  void notify_progress(double progress);
+  void img_rendered(QImage image);
 
  private:
   std::shared_ptr<Ui::main_window> ui;
 
   std::unique_ptr<QGraphicsScene> scene_ptr;
+  std::unique_ptr<QProgressDialog> pd_rend_ptr;
 };
