@@ -4,6 +4,7 @@
 #include <iostream>  // cout
 #include <thread>    // thread
 
+#include "camera.h"
 #include "hittable_list.h"
 #include "ray.h"
 #include "rtweekend.h"
@@ -33,6 +34,7 @@ void manager_draw::draw(unsigned const width, unsigned const height,
 
         // Image
         const auto aspect_ratio = static_cast<double>(img_w) / img_h;
+        const int samples_per_pixel = 100;
 
         // World
         hittable_list world;
@@ -40,28 +42,25 @@ void manager_draw::draw(unsigned const width, unsigned const height,
         world.add(std::make_shared<sphere>(point3{0, -100.5, -1}, 100));
 
         // Camera
-        auto viewport_height = 2.0;
-        auto viewport_width = aspect_ratio * viewport_height;
-        auto focal_length = 1.0;
-
-        auto origin = point3(0, 0, 0);
-        auto horizontal = vec3(viewport_width, 0, 0);
-        auto vertical = vec3(0, viewport_height, 0);
-        auto lower_left_corner =
-            origin - horizontal / 2 - vertical / 2 - vec3(0, 0, focal_length);
+        camera cam(aspect_ratio);
 
         for (int j = img_h - 1; j >= 0; --j) {
           for (int i = 0; i < img_w; ++i) {
-            auto u = double(i) / (img_w - 1);
-            auto v = double(j) / (img_h - 1);
-            ray r(origin,
-                  lower_left_corner + u * horizontal + v * vertical - origin);
-            color c = ray_color(r, world);
+            color pixel_color(0, 0, 0);
+            for (int s = 0; s < samples_per_pixel; ++s) {
+              auto u = (i + random_double()) / (img_w - 1);
+              auto v = (j + random_double()) / (img_h - 1);
+              ray r = cam.get_ray(u, v);
+              pixel_color += ray_color(r, world);
+            }
 
-            image.setPixelColor(i, j,
-                                {static_cast<int>(255.999 * c.x()),
-                                 static_cast<int>(255.999 * c.y()),
-                                 static_cast<int>(255.999 * c.z())});
+            pixel_color /= samples_per_pixel;
+
+            image.setPixelColor(
+                i, j,
+                {static_cast<int>(256 * clamp(pixel_color.x(), 0.0, 0.999)),
+                 static_cast<int>(256 * clamp(pixel_color.y(), 0.0, 0.999)),
+                 static_cast<int>(256 * clamp(pixel_color.z(), 0.0, 0.999))});
 
             double progress =
                 100.0 - (100.0 * (j * img_w + img_w - i)) / (img_h * img_w);

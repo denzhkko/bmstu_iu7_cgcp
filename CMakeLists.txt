@@ -34,6 +34,8 @@ set(PROJECT_SOURCES
   src/sphere.h
   src/rtweekend.h
   src/sphere.h
+
+  src/camera.h
   )
 
 add_executable(${PROJECT_NAME}
