@@ -24,6 +24,10 @@ set(PROJECT_SOURCES
 
   src/manager_draw.h
   src/manager_draw.cpp
+
+  src/vec3.h
+  src/color.h
+  src/ray.h
   )
 
 add_executable(${PROJECT_NAME}

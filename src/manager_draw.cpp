@@ -4,7 +4,16 @@
 #include <iostream>  // cout
 #include <thread>    // thread
 
+#include "ray.h"
+#include "vec3.h"
+
 using namespace std::literals::chrono_literals;
+
+color ray_color(const ray& r) {
+  vec3 unit_direction = unit_vector(r.direction());
+  auto t = 0.5 * (unit_direction.y() + 1.0);
+  return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
+}
 
 void manager_draw::draw(unsigned const width, unsigned const height,
                         std::function<void(double progress)> notify_progress,
@@ -15,25 +24,36 @@ void manager_draw::draw(unsigned const width, unsigned const height,
         QImage image(img_w, img_h, QImage::Format::Format_ARGB32_Premultiplied);
         image.fill(QColor(255, 255, 255));
 
+        const auto aspect_ratio = static_cast<double>(img_w) / img_h;
+
+        auto viewport_height = 2.0;
+        auto viewport_width = aspect_ratio * viewport_height;
+        auto focal_length = 1.0;
+
+        auto origin = point3(0, 0, 0);
+        auto horizontal = vec3(viewport_width, 0, 0);
+        auto vertical = vec3(0, viewport_height, 0);
+        auto lower_left_corner =
+            origin - horizontal / 2 - vertical / 2 - vec3(0, 0, focal_length);
+
         for (int j = img_h - 1; j >= 0; --j) {
           for (int i = 0; i < img_w; ++i) {
-            auto r = double(i) / (img_w - 1);
-            auto g = double(j) / (img_h - 1);
-            auto b = 0.25;
+            auto u = double(i) / (img_w - 1);
+            auto v = double(j) / (img_h - 1);
+            ray r(origin,
+                  lower_left_corner + u * horizontal + v * vertical - origin);
+            color c = ray_color(r);
 
-            int ir = static_cast<int>(255.999 * r);
-            int ig = static_cast<int>(255.999 * g);
-            int ib = static_cast<int>(255.999 * b);
-
-            image.setPixelColor(i, j, {ir, ig, ib});
+            image.setPixelColor(i, j,
+                                {static_cast<int>(255.999 * c.x()),
+                                 static_cast<int>(255.999 * c.y()),
+                                 static_cast<int>(255.999 * c.z())});
 
             double progress =
                 100.0 - (100.0 * (j * img_w + img_w - i)) / (img_h * img_w);
             notify_progress(progress);
           }
           if (is_cancelled()) break;
-
-          std::this_thread::sleep_for(3ms);
         }
 
         send_pic(image);
