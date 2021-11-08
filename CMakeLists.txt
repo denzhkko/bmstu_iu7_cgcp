@@ -28,6 +28,12 @@ set(PROJECT_SOURCES
   src/vec3.h
   src/color.h
   src/ray.h
+
+  src/hittable.h
+  src/hittable_list.h
+  src/sphere.h
+  src/rtweekend.h
+  src/sphere.h
   )
 
 add_executable(${PROJECT_NAME}
