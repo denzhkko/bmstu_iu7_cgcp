@@ -7,6 +7,7 @@ class camera {
   camera(double const aspect_ratio) {
     auto viewport_height = 2.0;
     auto viewport_width = aspect_ratio * viewport_height;
+
     auto focal_length = 1.0;
 
     origin = point3(0, 0, 0);
