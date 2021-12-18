@@ -4,6 +4,7 @@
 #include <iostream> // cout
 #include <thread>   // thread
 
+#include "bvh.h"
 #include "camera.h"
 #include "color.h"
 #include "hittable_list.h"
@@ -67,10 +68,13 @@ manager_draw::draw(unsigned const width,
         make_shared<sphere>(point3(0.0, 0.0, -1.0), 0.5, material_center));
       world.add(
         make_shared<sphere>(point3(-1.0, 0.0, -1.0), 0.5, material_left));
-      world.add(
-        make_shared<sphere>(point3(-1.0, 0.0, -1.0), -0.4, material_left));
+      // world.add(
+      //   make_shared<sphere>(point3(-1.0, 0.0, -1.0), -0.4, material_left));
       world.add(
         make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.5, material_right));
+
+      hittable_list objects;
+      objects.add(make_shared<bvh_node>(world));
 
       // Camera
       camera cam(aspect_ratio);
@@ -82,7 +86,8 @@ manager_draw::draw(unsigned const width,
             auto u = (i + random_double()) / (img_w - 1);
             auto v = (j + random_double()) / (img_h - 1);
             ray r = cam.get_ray(u, v);
-            pixel_color += ray_color(r, world, max_depth);
+            //            pixel_color += ray_color(r, world, max_depth);
+            pixel_color += ray_color(r, objects, max_depth);
           }
 
           // write_color(std::cout, pixel_color, samples_per_pixel);

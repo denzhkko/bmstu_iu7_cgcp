@@ -29,6 +29,7 @@ set(PROJECT_SOURCES
   src/color.h
   src/ray.h
 
+  src/marerial.h
   src/hittable.h
   src/hittable_list.h
   src/sphere.h
@@ -36,6 +37,9 @@ set(PROJECT_SOURCES
   src/sphere.h
 
   src/camera.h
+
+  src/aabb.h
+  src/bvh.h
   )
 
 add_executable(${PROJECT_NAME}
