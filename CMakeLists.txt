@@ -41,6 +41,7 @@ set(PROJECT_SOURCES
   src/aabb.h
   src/aarect.h
   src/bvh.h
+  src/box.h
 
   src/texture.h
   )
