@@ -39,6 +39,7 @@ set(PROJECT_SOURCES
   src/camera.h
 
   src/aabb.h
+  src/aarect.h
   src/bvh.h
 
   src/texture.h

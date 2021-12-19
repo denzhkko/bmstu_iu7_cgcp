@@ -17,7 +17,10 @@
 using namespace std::literals::chrono_literals;
 
 color
-ray_color(const ray& r, const hittable& world, int depth)
+ray_color(const ray& r,
+          const color& background,
+          const hittable& world,
+          int depth)
 {
   hit_record rec;
 
@@ -25,16 +28,19 @@ ray_color(const ray& r, const hittable& world, int depth)
   if (depth <= 0)
     return color(0, 0, 0);
 
-  if (world.hit(r, 0.001, infinity, rec)) {
-    ray scattered;
-    color attenuation;
-    if (rec.mat_ptr->scatter(r, rec, attenuation, scattered))
-      return attenuation * ray_color(scattered, world, depth - 1);
-    return color(0, 0, 0);
-  }
-  vec3 unit_direction = unit_vector(r.direction());
-  auto t = 0.5 * (unit_direction.y() + 1.0);
-  return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
+  // If the ray hits nothing, return the background color.
+  if (!world.hit(r, 0.001, infinity, rec))
+    return background;
+
+  ray scattered;
+  color attenuation;
+  color emitted = rec.mat_ptr->emitted(rec.u, rec.v, rec.p);
+
+  if (!rec.mat_ptr->scatter(r, rec, attenuation, scattered))
+    return emitted;
+
+  return emitted +
+         attenuation * ray_color(scattered, background, world, depth - 1);
 }
 
 void
@@ -61,6 +67,7 @@ manager_draw::draw(unsigned const width,
       auto material_center = make_shared<lambertian>(color(0.1, 0.2, 0.5));
       auto material_left = make_shared<dielectric>(1.5);
       auto material_right = make_shared<metal>(color(0.8, 0.6, 0.2), 0.0);
+      auto difflight = make_shared<diffuse_light>(color(4, 4, 4));
 
       auto checker = make_shared<checker_texture>(color(0.2, 0.3, 0.1),
                                                   color(0.9, 0.9, 0.9));
@@ -72,14 +79,17 @@ manager_draw::draw(unsigned const width,
         make_shared<sphere>(point3(-1.0, 0.0, -1.0), 0.5, material_left));
       // world.add(
       //   make_shared<sphere>(point3(-1.0, 0.0, -1.0), -0.4, material_left));
-      world.add(
-        make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.5, material_right));
+      // world.add(
+      //   make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.5, material_right));
+      world.add(make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.1, difflight));
 
       hittable_list objects;
       objects.add(make_shared<bvh_node>(world));
 
       // Camera
       camera cam(aspect_ratio);
+
+      color background(0, 0, 0);
 
       for (int j = img_h - 1; j >= 0; --j) {
         for (int i = 0; i < img_w; ++i) {
@@ -88,11 +98,8 @@ manager_draw::draw(unsigned const width,
             auto u = (i + random_double()) / (img_w - 1);
             auto v = (j + random_double()) / (img_h - 1);
             ray r = cam.get_ray(u, v);
-            //            pixel_color += ray_color(r, world, max_depth);
-            pixel_color += ray_color(r, objects, max_depth);
+            pixel_color += ray_color(r, background, world, max_depth);
           }
-
-          // write_color(std::cout, pixel_color, samples_per_pixel);
 
           auto r = pixel_color.x();
           auto g = pixel_color.y();
