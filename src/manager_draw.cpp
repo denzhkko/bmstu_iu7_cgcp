@@ -62,8 +62,10 @@ manager_draw::draw(unsigned const width,
       auto material_left = make_shared<dielectric>(1.5);
       auto material_right = make_shared<metal>(color(0.8, 0.6, 0.2), 0.0);
 
-      world.add(
-        make_shared<sphere>(point3(0.0, -100.5, -1.0), 100.0, material_ground));
+      auto checker = make_shared<checker_texture>(color(0.2, 0.3, 0.1),
+                                                  color(0.9, 0.9, 0.9));
+      world.add(make_shared<sphere>(
+        point3(0.0, -100.5, -1.0), 100.0, make_shared<lambertian>(checker)));
       world.add(
         make_shared<sphere>(point3(0.0, 0.0, -1.0), 0.5, material_center));
       world.add(

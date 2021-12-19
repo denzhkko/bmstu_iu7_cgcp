@@ -1,6 +1,7 @@
 #pragma once
 
 #include "rtweekend.h"
+#include "texture.h"
 
 struct hit_record;
 
@@ -17,6 +18,9 @@ class lambertian : public material
 {
 public:
   lambertian(const color& a)
+    : albedo(make_shared<solid_color>(a))
+  {}
+  lambertian(shared_ptr<texture> a)
     : albedo(a)
   {}
 
@@ -32,12 +36,12 @@ public:
       scatter_direction = rec.normal;
 
     scattered = ray(rec.p, scatter_direction);
-    attenuation = albedo;
+    attenuation = albedo->value(rec.u, rec.v, rec.p);
     return true;
   }
 
 public:
-  color albedo;
+  shared_ptr<texture> albedo;
 };
 
 class metal : public material
