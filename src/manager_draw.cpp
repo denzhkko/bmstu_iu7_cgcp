@@ -66,9 +66,14 @@ manager_draw::draw(unsigned const width,
         make_shared<checker_texture>(color(0, 0, 0), color(1, 1, 1)));
       auto tex_metall = make_shared<metal>(color(0.8, 0.6, 0.2), 0.0);
       auto tex_trans = make_shared<dielectric>(1.1);
+      auto tex_met_r =
+        make_shared<lambertian>(make_shared<solid_color>(color(0.8, 0.6, 0.2)));
+      auto tex_met_l = make_shared<metal>(color(0.1, 0.2, 0.5), 0.1);
 
       world.add(make_shared<sphere>(point3{ 0, -101, 0 }, 100, tex_checker));
       world.add(make_shared<sphere>(point3{ 0, 0, 0 }, 1, tex_trans));
+      world.add(make_shared<sphere>(point3{ 2, 0, 0 }, 1, tex_met_r));
+      world.add(make_shared<sphere>(point3{ -2, 0, 0 }, 1, tex_met_l));
 
       hittable_list objects;
       objects.add(make_shared<bvh_node>(world));
