@@ -62,34 +62,27 @@ manager_draw::draw(unsigned const width,
 
       // World
       hittable_list world;
+      auto tex_checker = make_shared<lambertian>(
+        make_shared<checker_texture>(color(0, 0, 0), color(1, 1, 1)));
+      auto tex_metall = make_shared<metal>(color(0.8, 0.6, 0.2), 0.0);
+      auto tex_trans = make_shared<dielectric>(1.1);
 
-      auto material_ground = make_shared<lambertian>(color(0.8, 0.8, 0.0));
-      auto material_center = make_shared<lambertian>(color(0.1, 0.2, 0.5));
-      auto material_left = make_shared<dielectric>(1.5);
-      auto material_right = make_shared<metal>(color(0.8, 0.6, 0.2), 0.0);
-      auto difflight = make_shared<diffuse_light>(color(4, 4, 4));
-
-      auto checker = make_shared<checker_texture>(color(0.2, 0.3, 0.1),
-                                                  color(0.9, 0.9, 0.9));
-      world.add(make_shared<sphere>(
-        point3(0.0, -100.5, -1.0), 100.0, make_shared<lambertian>(checker)));
-      world.add(
-        make_shared<sphere>(point3(0.0, 0.0, -1.0), 0.5, material_center));
-      world.add(
-        make_shared<sphere>(point3(-1.0, 0.0, -1.0), 0.5, material_left));
-      // world.add(
-      //   make_shared<sphere>(point3(-1.0, 0.0, -1.0), -0.4, material_left));
-      // world.add(
-      //   make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.5, material_right));
-      world.add(make_shared<sphere>(point3(1.0, 0.0, -1.0), 0.1, difflight));
+      world.add(make_shared<sphere>(point3{ 0, -101, 0 }, 100, tex_checker));
+      world.add(make_shared<sphere>(point3{ 0, 0, 0 }, 1, tex_trans));
 
       hittable_list objects;
       objects.add(make_shared<bvh_node>(world));
 
       // Camera
-      camera cam(aspect_ratio);
+      int x = 1;
+      camera cam(point3(0, 1 + x, x),
+                 point3(0, 1, 0),
+                 vec3(0, 1, 0),
+                 90,
+                 aspect_ratio,
+                 1.0);
 
-      color background(0, 0, 0);
+      color background(1, 1, 1);
 
       for (int j = img_h - 1; j >= 0; --j) {
         for (int i = 0; i < img_w; ++i) {
