@@ -75,6 +75,8 @@ public:
   double fuzz;
 };
 
+#include <iostream>
+
 class dielectric : public material
 {
 public:
@@ -82,13 +84,23 @@ public:
     : ir(index_of_refraction)
   {}
 
+#define RA 0.01
+
   virtual bool scatter(const ray& r_in,
                        const hit_record& rec,
                        color& attenuation,
                        ray& scattered) const override
   {
     attenuation = color(1.0, 1.0, 1.0);
-    double refraction_ratio = rec.front_face ? (1.0 / ir) : ir;
+    auto ir_tmp = ir;
+    if (r_in.rgb_ == RGB::R) {
+      ir_tmp += RA + (rand() / double(RAND_MAX) - 0.5) * RA;
+    } else if (r_in.rgb_ == RGB::B) {
+      ir_tmp += -RA + (rand() / double(RAND_MAX) - 0.5) * RA;
+    } else {
+      ir_tmp += 0 + (rand() / double(RAND_MAX) - 0.5) * RA;
+    }
+    double refraction_ratio = rec.front_face ? (1.0 / ir_tmp) : ir_tmp;
 
     vec3 unit_direction = unit_vector(r_in.direction());
     double cos_theta = fmin(dot(-unit_direction, rec.normal), 1.0);

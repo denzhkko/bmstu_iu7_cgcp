@@ -39,6 +39,8 @@ ray_color(const ray& r,
   if (!rec.mat_ptr->scatter(r, rec, attenuation, scattered))
     return emitted;
 
+  scattered.rgb_ = r.rgb_;
+
   return emitted +
          attenuation * ray_color(scattered, background, world, depth - 1);
 }
@@ -65,13 +67,13 @@ manager_draw::draw(unsigned const width,
       auto tex_checker = make_shared<lambertian>(
         make_shared<checker_texture>(color(0, 0, 0), color(1, 1, 1)));
       auto tex_metall = make_shared<metal>(color(0.8, 0.6, 0.2), 0.0);
-      auto tex_trans = make_shared<dielectric>(1.1);
+      auto tex_trans = make_shared<dielectric>(1.8);
       auto tex_met_r =
         make_shared<lambertian>(make_shared<solid_color>(color(0.8, 0.6, 0.2)));
       auto tex_met_l = make_shared<metal>(color(0.1, 0.2, 0.5), 0.1);
 
       world.add(make_shared<sphere>(point3{ 0, -101, 0 }, 100, tex_checker));
-      world.add(make_shared<sphere>(point3{ 0, 0, 0 }, 1, tex_trans));
+      world.add(make_shared<sphere>(point3{ 0, 4, 1 }, 1, tex_trans));
       world.add(make_shared<sphere>(point3{ 2, 0, 0 }, 1, tex_met_r));
       world.add(make_shared<sphere>(point3{ -2, 0, 0 }, 1, tex_met_l));
 
@@ -79,13 +81,13 @@ manager_draw::draw(unsigned const width,
       objects.add(make_shared<bvh_node>(world));
 
       // Camera
-      int x = 1;
+      int x = 2;
       camera cam(point3(0, 1 + x, x),
                  point3(0, 1, 0),
                  vec3(0, 1, 0),
-                 90,
+                 45,
                  aspect_ratio,
-                 1.0);
+                 4.0);
 
       color background(1, 1, 1);
 
@@ -96,7 +98,12 @@ manager_draw::draw(unsigned const width,
             auto u = (i + random_double()) / (img_w - 1);
             auto v = (j + random_double()) / (img_h - 1);
             ray r = cam.get_ray(u, v);
-            pixel_color += ray_color(r, background, world, max_depth);
+            r.set_RGB(RGB::R);
+            pixel_color.e[0] += ray_color(r, background, world, max_depth).e[0];
+            r.set_RGB(RGB::G);
+            pixel_color.e[1] += ray_color(r, background, world, max_depth).e[1];
+            r.set_RGB(RGB::B);
+            pixel_color.e[2] += ray_color(r, background, world, max_depth).e[2];
           }
 
           auto r = pixel_color.x();
