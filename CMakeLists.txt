@@ -44,6 +44,7 @@ set(PROJECT_SOURCES
   src/box.h
 
   src/texture.h
+  src/render_settings.h
   )
 
 add_executable(${PROJECT_NAME}

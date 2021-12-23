@@ -28,6 +28,10 @@ signals:
   void notify_progress(double progress);
   void img_rendered(QImage image);
 
+
+private:
+  void resizeEvent( QResizeEvent *e ) override;
+
 private:
   std::shared_ptr<Ui::main_window> ui;
 

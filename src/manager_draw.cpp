@@ -46,20 +46,19 @@ ray_color(const ray& r,
 }
 
 void
-manager_draw::draw(unsigned const width,
-                   unsigned const height,
+manager_draw::draw(render_settings const rs,
                    std::function<void(double progress)> notify_progress,
                    std::function<bool()> is_cancelled,
                    std::function<void(QImage)> send_pic)
 {
   auto th = std::thread(
-    [notify_progress, is_cancelled, send_pic](int img_w, int img_h) {
+    [notify_progress, is_cancelled, send_pic, samples_per_pixel = rs.ray_pp_](
+      int img_w, int img_h) {
       QImage image(img_w, img_h, QImage::Format::Format_ARGB32_Premultiplied);
       image.fill(QColor(255, 255, 255));
 
       // Image
       const auto aspect_ratio = static_cast<double>(img_w) / img_h;
-      const int samples_per_pixel = 100;
       const int max_depth = 50;
 
       // World
@@ -134,8 +133,8 @@ manager_draw::draw(unsigned const width,
       image = image.mirrored(false, true);
       send_pic(image);
     },
-    width,
-    height);
+    rs.width_,
+    rs.height_);
 
   th.detach();
 }
