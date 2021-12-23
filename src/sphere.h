@@ -41,7 +41,7 @@ private:
   }
 };
 
-bool
+inline bool
 sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) const
 {
   vec3 oc = r.origin() - center;
@@ -73,7 +73,7 @@ sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) const
   return true;
 }
 
-bool
+inline bool
 sphere::bounding_box(aabb& output_box) const
 {
   output_box = aabb(center - vec3(radius, radius, radius),

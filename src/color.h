@@ -3,7 +3,13 @@
 #include "rtweekend.h"
 #include "vec3.h"
 
-void
+#if 0
+std::ostream&
+operator<<(std::ostream& out, color color);
+#endif
+
+/*
+inline void
 write_color(std::ostream& out, color pixel_color, int samples_per_pixel)
 {
   auto r = pixel_color.x();
@@ -21,3 +27,4 @@ write_color(std::ostream& out, color pixel_color, int samples_per_pixel)
       << static_cast<int>(256 * clamp(g, 0.0, 0.999)) << ' '
       << static_cast<int>(256 * clamp(b, 0.0, 0.999)) << '\n';
 }
+ */

@@ -75,8 +75,6 @@ public:
   double fuzz;
 };
 
-#include <iostream>
-
 class dielectric : public material
 {
 public:

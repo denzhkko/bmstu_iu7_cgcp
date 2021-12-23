@@ -20,6 +20,7 @@ public:
 
 private slots:
   void on_pb_draw_clicked();
+  void on_pb_add_object_clicked();
 
   void draw_img(QImage image);
   void change_progress(double progress);

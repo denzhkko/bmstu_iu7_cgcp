@@ -33,6 +33,7 @@ set(PROJECT_SOURCES
 
         src/vec3.h
         src/color.h
+        src/color.cpp
         src/ray.h
 
         src/material.h
@@ -50,11 +51,20 @@ set(PROJECT_SOURCES
         src/box.h
 
         src/texture.h
-        src/render_settings.h
+        src/settings_render.h
+        src/scene.h
+        src/util.h
+
+        widgets/ColorPicker.h
+        widgets/ColorPicker.cpp
         )
 
 add_executable(${PROJECT_NAME}
         ${PROJECT_SOURCES}
+        )
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+        widgets/
         )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE

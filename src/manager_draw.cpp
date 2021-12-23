@@ -1,5 +1,6 @@
 #include "manager_draw.h"
 
+#include <boost/log/trivial.hpp>
 #include <chrono>   // duration
 #include <iostream> // cout
 #include <thread>   // thread
@@ -46,14 +47,15 @@ ray_color(const ray& r,
 }
 
 void
-manager_draw::draw(render_settings const rs,
+manager_draw::draw(settings_render const rs,
+                   scene scene,
                    std::function<void(double progress)> notify_progress,
                    std::function<bool()> is_cancelled,
                    std::function<void(QImage)> send_pic)
 {
   auto th = std::thread(
     [notify_progress, is_cancelled, send_pic, samples_per_pixel = rs.ray_pp_](
-      int img_w, int img_h) {
+      int img_w, int img_h, struct scene const& scene) {
       QImage image(img_w, img_h, QImage::Format::Format_ARGB32_Premultiplied);
       image.fill(QColor(255, 255, 255));
 
@@ -61,34 +63,14 @@ manager_draw::draw(render_settings const rs,
       const auto aspect_ratio = static_cast<double>(img_w) / img_h;
       const int max_depth = 50;
 
-      // World
-      hittable_list world;
-      auto tex_checker = make_shared<lambertian>(
-        make_shared<checker_texture>(color(0, 0, 0), color(1, 1, 1)));
-      auto tex_metall = make_shared<metal>(color(0.8, 0.6, 0.2), 0.0);
-      auto tex_trans = make_shared<dielectric>(1.8);
-      auto tex_met_r =
-        make_shared<lambertian>(make_shared<solid_color>(color(0.8, 0.6, 0.2)));
-      auto tex_met_l = make_shared<metal>(color(0.1, 0.2, 0.5), 0.1);
-
-      world.add(make_shared<sphere>(point3{ 0, -101, 0 }, 100, tex_checker));
-      world.add(make_shared<sphere>(point3{ 0, 4, 1 }, 1, tex_trans));
-      world.add(make_shared<sphere>(point3{ 2, 0, 0 }, 1, tex_met_r));
-      world.add(make_shared<sphere>(point3{ -2, 0, 0 }, 1, tex_met_l));
-
       hittable_list objects;
-      objects.add(make_shared<bvh_node>(world));
+      objects.add(make_shared<bvh_node>(scene.world_));
 
       // Camera
-      int x = 2;
-      camera cam(point3(0, 1 + x, x),
-                 point3(0, 1, 0),
-                 vec3(0, 1, 0),
-                 45,
-                 aspect_ratio,
-                 4.0);
+      camera cam(
+        scene.lookfrom_, scene.lookto_, vec3(0, 1, 0), 45, aspect_ratio, 4.0);
 
-      color background(1, 1, 1);
+      color background = scene.background_;
 
       for (int j = img_h - 1; j >= 0; --j) {
         for (int i = 0; i < img_w; ++i) {
@@ -98,11 +80,14 @@ manager_draw::draw(render_settings const rs,
             auto v = (j + random_double()) / (img_h - 1);
             ray r = cam.get_ray(u, v);
             r.set_RGB(RGB::R);
-            pixel_color.e[0] += ray_color(r, background, world, max_depth).e[0];
+            pixel_color.e[0] +=
+              ray_color(r, background, scene.world_, max_depth).e[0];
             r.set_RGB(RGB::G);
-            pixel_color.e[1] += ray_color(r, background, world, max_depth).e[1];
+            pixel_color.e[1] +=
+              ray_color(r, background, scene.world_, max_depth).e[1];
             r.set_RGB(RGB::B);
-            pixel_color.e[2] += ray_color(r, background, world, max_depth).e[2];
+            pixel_color.e[2] +=
+              ray_color(r, background, scene.world_, max_depth).e[2];
           }
 
           auto r = pixel_color.x();
@@ -134,7 +119,8 @@ manager_draw::draw(render_settings const rs,
       send_pic(image);
     },
     rs.width_,
-    rs.height_);
+    rs.height_,
+    scene);
 
   th.detach();
 }

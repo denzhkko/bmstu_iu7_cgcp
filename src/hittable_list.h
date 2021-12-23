@@ -29,7 +29,7 @@ public:
   std::vector<shared_ptr<hittable>> objects;
 };
 
-bool
+inline bool
 hittable_list::hit(const ray& r,
                    double t_min,
                    double t_max,
@@ -50,7 +50,7 @@ hittable_list::hit(const ray& r,
   return hit_anything;
 }
 
-bool
+inline bool
 hittable_list::bounding_box(aabb& output_box) const
 {
   if (objects.empty())
