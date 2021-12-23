@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 
-#include <iostream>
+#include <boost/log/trivial.hpp>
 
 #include "./ui_mainwindow.h"
 #include "manager_draw.h"
@@ -43,8 +43,8 @@ main_window::on_pb_draw_clicked()
                       static_cast<unsigned int>(ui->gv_canvas->height()),
                       ray_pp };
 
-  std::cout << "Canvas: " << rs.width_ << 'x' << rs.height_
-            << "; ray_pp: " << rs.ray_pp_ << std::endl;
+  BOOST_LOG_TRIVIAL(info) << "Canvas: " << rs.width_ << 'x' << rs.height_
+                          << "; ray_pp: " << rs.ray_pp_;
 
   manager_draw{}.draw(
     rs,
