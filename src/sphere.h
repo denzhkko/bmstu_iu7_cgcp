@@ -20,11 +20,12 @@ public:
 
   std::string about() const override
   {
-    return QString{ "Sphere center (%1, %2, %3), r = %4" }
+    return QString{ "Sphere center (%1, %2, %3), r = %4; Material: %5" }
       .arg(center.e[0])
       .arg(center.e[1])
       .arg(center.e[2])
       .arg(radius)
+      .arg(QString::fromStdString(mat_ptr->about()))
       .toStdString();
   }
 

@@ -19,6 +19,8 @@ public:
                        const hit_record& rec,
                        color& attenuation,
                        ray& scattered) const = 0;
+
+  virtual std::string about() const { return "no material info"; }
 };
 
 class lambertian : public material
@@ -27,6 +29,7 @@ public:
   lambertian(const color& a)
     : albedo(make_shared<solid_color>(a))
   {}
+
   lambertian(shared_ptr<texture> a)
     : albedo(a)
   {}
@@ -45,6 +48,13 @@ public:
     scattered = ray(rec.p, scatter_direction);
     attenuation = albedo->value(rec.u, rec.v, rec.p);
     return true;
+  }
+
+  std::string about() const override
+  {
+    return QString("labmerian (texture: %1)")
+      .arg(QString::fromStdString(albedo->about()))
+      .toStdString();
   }
 
 public:
@@ -69,6 +79,8 @@ public:
     attenuation = albedo;
     return (dot(scattered.direction(), rec.normal) > 0);
   }
+
+  std::string about() const override { return "metall"; }
 
 public:
   color albedo;
@@ -118,6 +130,8 @@ public:
     return true;
   }
 
+  std::string about() const override { return "dielectric"; }
+
 public:
   double ir; // Index of Refraction
 
@@ -137,6 +151,7 @@ public:
   diffuse_light(shared_ptr<texture> a)
     : emitt(a)
   {}
+
   diffuse_light(color c)
     : emitt(make_shared<solid_color>(c))
   {}
@@ -153,6 +168,8 @@ public:
   {
     return emitt->value(u, v, p);
   }
+
+  std::string about() const override { return "diffuse_light"; }
 
 public:
   shared_ptr<texture> emitt;
