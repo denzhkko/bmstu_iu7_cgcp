@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QProgressDialog>
 #include <memory> // unique_ptr, shared_ptr
+#include "hittable_list.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -21,6 +22,7 @@ public:
 private slots:
   void on_pb_draw_clicked();
   void on_pb_add_object_clicked();
+  void on_pb_delete_item_clicked();
 
   void draw_img(QImage image);
   void change_progress(double progress);
@@ -33,9 +35,13 @@ signals:
 private:
   void resizeEvent( QResizeEvent *e ) override;
 
+  void fillWorldList();
+
 private:
   std::shared_ptr<Ui::main_window> ui;
 
   std::unique_ptr<QGraphicsScene> scene_ptr;
   std::unique_ptr<QProgressDialog> pd_rend_ptr;
+
+  hittable_list world_;
 };

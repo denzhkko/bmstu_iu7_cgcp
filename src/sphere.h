@@ -18,6 +18,16 @@ public:
            hit_record& rec) const override;
   bool bounding_box(aabb& output_box) const override;
 
+  std::string about() const override
+  {
+    return QString{ "Sphere center (%1, %2, %3), r = %4" }
+      .arg(center.e[0])
+      .arg(center.e[1])
+      .arg(center.e[2])
+      .arg(radius)
+      .toStdString();
+  }
+
 public:
   point3 center;
   double radius;

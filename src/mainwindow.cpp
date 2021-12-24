@@ -22,6 +22,21 @@ main_window::main_window(QWidget* parent)
   ui->gv_canvas->setScene(scene_ptr.get());
   ui->gv_canvas->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   ui->gv_canvas->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+  auto tex_checker = make_shared<lambertian>(
+    make_shared<checker_texture>(color(0, 0, 0), color(1, 1, 1)));
+  auto tex_metall = make_shared<metal>(color(0.8, 0.6, 0.2), 0.0);
+  auto tex_trans = make_shared<dielectric>(1.8);
+  auto tex_met_r =
+    make_shared<lambertian>(make_shared<solid_color>(color(0.8, 0.6, 0.2)));
+  auto tex_met_l = make_shared<metal>(color(0.1, 0.2, 0.5), 0.1);
+
+  world_.add(make_shared<sphere>(point3{ 0, -101, 0 }, 100, tex_checker));
+  world_.add(make_shared<sphere>(point3{ 0, 2, 1 }, 1, tex_trans));
+  world_.add(make_shared<sphere>(point3{ 2, 0, 0 }, 1, tex_met_r));
+  world_.add(make_shared<sphere>(point3{ -2, 0, 0 }, 1, tex_met_l));
+
+  fillWorldList();
 }
 
 void
@@ -44,19 +59,7 @@ main_window::on_pb_draw_clicked()
   }
 
   // World
-  hittable_list world;
-  auto tex_checker = make_shared<lambertian>(
-    make_shared<checker_texture>(color(0, 0, 0), color(1, 1, 1)));
-  auto tex_metall = make_shared<metal>(color(0.8, 0.6, 0.2), 0.0);
-  auto tex_trans = make_shared<dielectric>(1.8);
-  auto tex_met_r =
-    make_shared<lambertian>(make_shared<solid_color>(color(0.8, 0.6, 0.2)));
-  auto tex_met_l = make_shared<metal>(color(0.1, 0.2, 0.5), 0.1);
-
-  world.add(make_shared<sphere>(point3{ 0, -101, 0 }, 100, tex_checker));
-  world.add(make_shared<sphere>(point3{ 0, 4, 1 }, 1, tex_trans));
-  world.add(make_shared<sphere>(point3{ 2, 0, 0 }, 1, tex_met_r));
-  world.add(make_shared<sphere>(point3{ -2, 0, 0 }, 1, tex_met_l));
+  hittable_list world{ world_ };
 
   color background{ qRed(ui->cp_background->color().rgb()) / 256.0,
                     qGreen(ui->cp_background->color().rgb()) / 256.0,
@@ -138,6 +141,11 @@ main_window::on_pb_add_object_clicked()
       BOOST_LOG_TRIVIAL(info) << "Transparent checked";
     } else if (ui->rb_no_m_light->isChecked()) {
       BOOST_LOG_TRIVIAL(info) << "Light checked";
+
+      color c = to_color(ui->cp_no_m_l_c->color());
+
+      auto material = std::make_shared<diffuse_light>(c);
+      obj = std::make_shared<sphere>(center, radius, material);
     } else {
       BOOST_LOG_TRIVIAL(error) << "Material not checked";
     }
@@ -146,6 +154,23 @@ main_window::on_pb_add_object_clicked()
     BOOST_LOG_TRIVIAL(info) << "Box checked";
   } else {
     BOOST_LOG_TRIVIAL(error) << "Figure not checked";
+  }
+
+  world_.add(obj);
+  fillWorldList();
+}
+
+void
+main_window::on_pb_delete_item_clicked()
+{
+  int i = ui->sb_del_item_i->value();
+
+  if (i < world_.objects.size()) {
+    world_.objects.erase(world_.objects.begin() + i,
+                         world_.objects.begin() + i + 1);
+    fillWorldList();
+  } else {
+    BOOST_LOG_TRIVIAL(error) << "index " << i << " not in vector range";
   }
 }
 
@@ -172,4 +197,16 @@ main_window::resizeEvent(QResizeEvent* e)
   ui->statusbar->showMessage(QString("Canvas: %1x%2")
                                .arg(ui->gv_canvas->width())
                                .arg(ui->gv_canvas->height()));
+}
+
+void
+main_window::fillWorldList()
+{
+  while (0 != ui->lw_objs->count()) {
+    ui->lw_objs->takeItem(0);
+  }
+
+  for (auto const& obj : world_.objects) {
+    ui->lw_objs->addItem(QString::fromStdString(obj->about()));
+  }
 }
