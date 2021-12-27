@@ -1,7 +1,19 @@
-# build dir
+# build dirs
 
 **/build/**
+**/cmake-build-debug/**
+
+
+# idea IDE dirs
+
+**/.idea/**
+
 
 # cmake user
 
 CMakeLists.txt.user
+
+
+# formatter
+
+.clang-format
