@@ -138,6 +138,9 @@ main_window::on_pb_add_object_clicked()
       auto material = std::make_shared<metal>(c, 0.0);
       obj = std::make_shared<sphere>(center, radius, material);
     } else if (ui->rb_no_m_trans->isChecked()) {
+      auto material = std::make_shared<dielectric>(1.8);
+      obj = std::make_shared<sphere>(center, radius, material);
+
       BOOST_LOG_TRIVIAL(info) << "Transparent checked";
     } else if (ui->rb_no_m_light->isChecked()) {
       BOOST_LOG_TRIVIAL(info) << "Light checked";
