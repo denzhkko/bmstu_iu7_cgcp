@@ -72,46 +72,48 @@ manager_draw::draw(settings_render const rs,
 
       color background = scene.background_;
 
-      for (int j = img_h - 1; j >= 0; --j) {
-        for (int i = 0; i < img_w; ++i) {
-          color pixel_color(0, 0, 0);
-          for (int s = 0; s < samples_per_pixel; ++s) {
-            auto u = (i + random_double()) / (img_w - 1);
-            auto v = (j + random_double()) / (img_h - 1);
-            ray r = cam.get_ray(u, v);
-            r.set_RGB(RGB::R);
-            pixel_color.e[0] +=
-              ray_color(r, background, scene.world_, max_depth).e[0];
-            r.set_RGB(RGB::G);
-            pixel_color.e[1] +=
-              ray_color(r, background, scene.world_, max_depth).e[1];
-            r.set_RGB(RGB::B);
-            pixel_color.e[2] +=
-              ray_color(r, background, scene.world_, max_depth).e[2];
-          }
+      for (int p = 0; p < img_w * img_h; ++p) {
+        int i = p / img_w;
+        int j = p % img_w;
 
-          auto r = pixel_color.x();
-          auto g = pixel_color.y();
-          auto b = pixel_color.z();
-
-          // Divide the color by the number of samples and gamma-correct for
-          // gamma=2.0.
-          auto scale = 1.0 / samples_per_pixel;
-          r = sqrt(scale * r);
-          g = sqrt(scale * g);
-          b = sqrt(scale * b);
-
-          image.setPixelColor(i,
-                              j,
-                              { static_cast<int>(256 * clamp(r, 0.0, 0.999)),
-                                static_cast<int>(256 * clamp(g, 0.0, 0.999)),
-                                static_cast<int>(256 * clamp(b, 0.0, 0.999)) });
-
-          double progress =
-            100.0 - (100.0 * (j * img_w + img_w - i)) / (img_h * img_w);
-          notify_progress(progress);
+        color pixel_color(0, 0, 0);
+        for (int s = 0; s < samples_per_pixel; ++s) {
+          auto u = (j + random_double()) / (img_w - 1);
+          auto v = (i + random_double()) / (img_h - 1);
+          ray r = cam.get_ray(u, v);
+          r.set_RGB(RGB::R);
+          pixel_color.e[0] +=
+            ray_color(r, background, scene.world_, max_depth).e[0];
+          r.set_RGB(RGB::G);
+          pixel_color.e[1] +=
+            ray_color(r, background, scene.world_, max_depth).e[1];
+          r.set_RGB(RGB::B);
+          pixel_color.e[2] +=
+            ray_color(r, background, scene.world_, max_depth).e[2];
         }
-        if (is_cancelled())
+
+        auto r = pixel_color.x();
+        auto g = pixel_color.y();
+        auto b = pixel_color.z();
+
+        // Divide the color by the number of samples and gamma-correct for
+        // gamma=2.0.
+        auto scale = 1.0 / samples_per_pixel;
+        r = sqrt(scale * r);
+        g = sqrt(scale * g);
+        b = sqrt(scale * b);
+
+        image.setPixelColor(j,
+                            i,
+                            { static_cast<int>(256 * clamp(r, 0.0, 0.999)),
+                              static_cast<int>(256 * clamp(g, 0.0, 0.999)),
+                              static_cast<int>(256 * clamp(b, 0.0, 0.999)) });
+
+        double progress = (100.0 * p) / (img_h * img_w);
+        BOOST_LOG_TRIVIAL(trace) << progress;
+        notify_progress(progress);
+
+        if (0 == j && is_cancelled())
           break;
       }
 

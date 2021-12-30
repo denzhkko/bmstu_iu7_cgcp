@@ -21,8 +21,6 @@ link_directories(${Boost_LIBRARY_DIRS})
 add_definitions(-DBOOST_LOG_DYN_LINK)
 
 set(PROJECT_SOURCES
-        src/main.cpp
-
         src/mainwindow.ui
 
         src/mainwindow.h
@@ -60,6 +58,8 @@ set(PROJECT_SOURCES
         )
 
 add_executable(${PROJECT_NAME}
+        src/main.cpp
+
         ${PROJECT_SOURCES}
         )
 
@@ -71,4 +71,25 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
         Threads::Threads
         ${Boost_LOG_LIBRARY}
+        )
+
+set(TIME_MEA time_mea)
+
+add_executable(${TIME_MEA}
+        test/time_mea.cpp
+
+        ${PROJECT_SOURCES}
+        )
+
+target_include_directories(${TIME_MEA} PUBLIC
+        src/
+        widgets/
+        )
+
+find_package(OpenMP REQUIRED)
+target_link_libraries(${TIME_MEA} PRIVATE
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Threads::Threads
+        ${Boost_LOG_LIBRARY}
+        OpenMP::OpenMP_CXX
         )
