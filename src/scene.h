@@ -12,7 +12,7 @@ struct scene
     : background_{ background }
     , lookfrom_{ lookfrom_ }
     , lookto_{ lookto_ }
-    , world_{std::move( world )}
+    , world_{ std::move(world) }
   {}
 
   color background_;

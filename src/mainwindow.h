@@ -1,10 +1,10 @@
 #pragma once
 
+#include "hittable_list.h"
 #include <QGraphicsScene>
 #include <QMainWindow>
 #include <QProgressDialog>
 #include <memory> // unique_ptr, shared_ptr
-#include "hittable_list.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -31,9 +31,8 @@ signals:
   void notify_progress(double progress);
   void img_rendered(QImage image);
 
-
 private:
-  void resizeEvent( QResizeEvent *e ) override;
+  void resizeEvent(QResizeEvent* e) override;
 
   void fillWorldList();
 
