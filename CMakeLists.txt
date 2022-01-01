@@ -20,6 +20,8 @@ include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
 add_definitions(-DBOOST_LOG_DYN_LINK)
 
+find_package(OpenMP REQUIRED)
+
 set(PROJECT_SOURCES
         src/mainwindow.ui
 
@@ -71,6 +73,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
         Threads::Threads
         ${Boost_LOG_LIBRARY}
+        OpenMP::OpenMP_CXX
         )
 
 set(TIME_MEA time_mea)
@@ -86,7 +89,6 @@ target_include_directories(${TIME_MEA} PUBLIC
         widgets/
         )
 
-find_package(OpenMP REQUIRED)
 target_link_libraries(${TIME_MEA} PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
         Threads::Threads

@@ -1,5 +1,6 @@
 #include "manager_draw.h"
 
+#include <atomic>
 #include <boost/log/trivial.hpp>
 #include <chrono>   // duration
 #include <iostream> // cout
@@ -72,7 +73,12 @@ manager_draw::draw(settings_render const rs,
 
       color background = scene.background_;
 
+      unsigned u_progress = 0;
+#pragma omp parallel for schedule(dynamic)
       for (int p = 0; p < img_w * img_h; ++p) {
+        if (is_cancelled())
+          continue;
+
         int i = p / img_w;
         int j = p % img_w;
 
@@ -109,12 +115,11 @@ manager_draw::draw(settings_render const rs,
                               static_cast<int>(256 * clamp(g, 0.0, 0.999)),
                               static_cast<int>(256 * clamp(b, 0.0, 0.999)) });
 
-        double progress = (100.0 * p) / (img_h * img_w);
-        BOOST_LOG_TRIVIAL(trace) << progress;
-        notify_progress(progress);
-
-        if (0 == j && is_cancelled())
-          break;
+#pragma omp critical
+        {
+          double progress = (100.0 * ++u_progress) / (img_h * img_w);
+          notify_progress(progress);
+        }
       }
 
       image = image.mirrored(false, true);
