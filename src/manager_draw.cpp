@@ -55,8 +55,11 @@ manager_draw::draw(settings_render const rs,
                    std::function<void(QImage)> send_pic)
 {
   auto th = std::thread(
-    [notify_progress, is_cancelled, send_pic, samples_per_pixel = rs.ray_pp_](
-      int img_w, int img_h, struct scene const& scene) {
+    [notify_progress, is_cancelled, send_pic](settings_render rs,
+                                              struct scene const& scene) {
+      unsigned img_w = rs.width_;
+      unsigned img_h = rs.height_;
+
       QImage image(img_w, img_h, QImage::Format::Format_ARGB32_Premultiplied);
       image.fill(QColor(255, 255, 255));
 
@@ -68,8 +71,12 @@ manager_draw::draw(settings_render const rs,
       objects.add(make_shared<bvh_node>(scene.world_));
 
       // Camera
-      camera cam(
-        scene.lookfrom_, scene.lookto_, vec3(0, 1, 0), 45, aspect_ratio, 4.0);
+      camera cam(scene.lookfrom_,
+                 scene.lookto_,
+                 vec3(0, 1, 0),
+                 45,
+                 aspect_ratio,
+                 rs.camera_canvas_);
 
       color background = scene.background_;
 
@@ -83,7 +90,7 @@ manager_draw::draw(settings_render const rs,
         int j = p % img_w;
 
         color pixel_color(0, 0, 0);
-        for (int s = 0; s < samples_per_pixel; ++s) {
+        for (int s = 0; s < rs.ray_pp_; ++s) {
           auto u = (j + random_double()) / (img_w - 1);
           auto v = (i + random_double()) / (img_h - 1);
           ray r = cam.get_ray(u, v);
@@ -104,7 +111,7 @@ manager_draw::draw(settings_render const rs,
 
         // Divide the color by the number of samples and gamma-correct for
         // gamma=2.0.
-        auto scale = 1.0 / samples_per_pixel;
+        auto scale = 1.0 / rs.ray_pp_;
         r = sqrt(scale * r);
         g = sqrt(scale * g);
         b = sqrt(scale * b);
@@ -125,8 +132,7 @@ manager_draw::draw(settings_render const rs,
       image = image.mirrored(false, true);
       send_pic(image);
     },
-    rs.width_,
-    rs.height_,
+    rs,
     scene);
 
   th.detach();

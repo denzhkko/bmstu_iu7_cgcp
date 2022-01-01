@@ -40,7 +40,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -152,6 +152,19 @@
            <string>Camera</string>
           </property>
           <layout class="QGridLayout" name="gridLayout">
+           <item row="1" column="2">
+            <widget class="QDoubleSpinBox" name="dsb_pt_x">
+             <property name="decimals">
+              <number>3</number>
+             </property>
+             <property name="minimum">
+              <double>-1000.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>1000.000000000000000</double>
+             </property>
+            </widget>
+           </item>
            <item row="0" column="1">
             <widget class="QLabel" name="label_3">
              <property name="text">
@@ -159,10 +172,85 @@
              </property>
             </widget>
            </item>
+           <item row="3" column="1">
+            <widget class="QDoubleSpinBox" name="dsb_pf_z">
+             <property name="decimals">
+              <number>3</number>
+             </property>
+             <property name="minimum">
+              <double>-1000.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>1000.000000000000000</double>
+             </property>
+             <property name="value">
+              <double>3.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QDoubleSpinBox" name="dsb_pf_y">
+             <property name="decimals">
+              <number>3</number>
+             </property>
+             <property name="minimum">
+              <double>-1000.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>1000.000000000000000</double>
+             </property>
+             <property name="value">
+              <double>3.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QDoubleSpinBox" name="dsb_pt_y">
+             <property name="decimals">
+              <number>3</number>
+             </property>
+             <property name="minimum">
+              <double>-1000.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>1000.000000000000000</double>
+             </property>
+             <property name="value">
+              <double>1.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QDoubleSpinBox" name="dsb_pt_z">
+             <property name="decimals">
+              <number>3</number>
+             </property>
+             <property name="minimum">
+              <double>-1000.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>1000.000000000000000</double>
+             </property>
+            </widget>
+           </item>
            <item row="0" column="2">
             <widget class="QLabel" name="label_4">
              <property name="text">
               <string>Point to</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>y</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>z</string>
              </property>
             </widget>
            </item>
@@ -176,7 +264,7 @@
            <item row="1" column="1">
             <widget class="QDoubleSpinBox" name="dsb_pf_x">
              <property name="decimals">
-              <number>1</number>
+              <number>3</number>
              </property>
              <property name="minimum">
               <double>-1000.000000000000000</double>
@@ -186,91 +274,20 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_6">
-             <property name="text">
-              <string>y</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QDoubleSpinBox" name="dsb_pf_y">
-             <property name="decimals">
-              <number>1</number>
-             </property>
-             <property name="minimum">
-              <double>-1000.000000000000000</double>
-             </property>
+           <item row="4" column="1">
+            <widget class="QDoubleSpinBox" name="dsb_cc_d">
              <property name="maximum">
-              <double>1000.000000000000000</double>
-             </property>
-             <property name="value">
-              <double>4.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="2">
-            <widget class="QDoubleSpinBox" name="dsb_pt_y">
-             <property name="decimals">
-              <number>1</number>
-             </property>
-             <property name="minimum">
-              <double>-1000.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>1000.000000000000000</double>
+              <double>10.000000000000000</double>
              </property>
              <property name="value">
               <double>1.000000000000000</double>
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_7">
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_24">
              <property name="text">
-              <string>z</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QDoubleSpinBox" name="dsb_pf_z">
-             <property name="decimals">
-              <number>1</number>
-             </property>
-             <property name="minimum">
-              <double>-1000.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>1000.000000000000000</double>
-             </property>
-             <property name="value">
-              <double>4.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="2">
-            <widget class="QDoubleSpinBox" name="dsb_pt_z">
-             <property name="decimals">
-              <number>1</number>
-             </property>
-             <property name="minimum">
-              <double>-1000.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>1000.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="2">
-            <widget class="QDoubleSpinBox" name="dsb_pt_x">
-             <property name="decimals">
-              <number>1</number>
-             </property>
-             <property name="minimum">
-              <double>-1000.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>1000.000000000000000</double>
+              <string>cemara-canvas</string>
              </property>
             </widget>
            </item>
@@ -344,7 +361,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>371</width>
+             <width>399</width>
              <height>1321</height>
             </rect>
            </property>
@@ -835,78 +852,78 @@
                   <item row="1" column="1">
                    <widget class="QDoubleSpinBox" name="dsb_m_t_b1">
                     <property name="decimals">
-                     <number>4</number>
+                     <number>6</number>
                     </property>
                     <property name="maximum">
                      <double>10000.000000000000000</double>
                     </property>
                     <property name="value">
-                     <double>1.621500000000000</double>
+                     <double>1.039612000000000</double>
                     </property>
                    </widget>
                   </item>
                   <item row="1" column="2">
                    <widget class="QDoubleSpinBox" name="dsb_m_t_c1">
                     <property name="decimals">
-                     <number>4</number>
+                     <number>6</number>
                     </property>
                     <property name="maximum">
                      <double>10000.000000000000000</double>
                     </property>
                     <property name="value">
-                     <double>0.012200000000000</double>
+                     <double>0.006000000000000</double>
                     </property>
                    </widget>
                   </item>
                   <item row="2" column="1">
                    <widget class="QDoubleSpinBox" name="dsb_m_t_b2">
                     <property name="decimals">
-                     <number>4</number>
+                     <number>6</number>
                     </property>
                     <property name="maximum">
                      <double>10000.000000000000000</double>
                     </property>
                     <property name="value">
-                     <double>0.256300000000000</double>
+                     <double>0.231792000000000</double>
                     </property>
                    </widget>
                   </item>
                   <item row="2" column="2">
                    <widget class="QDoubleSpinBox" name="dsb_m_t_c2">
                     <property name="decimals">
-                     <number>4</number>
+                     <number>6</number>
                     </property>
                     <property name="maximum">
                      <double>10000.000000000000000</double>
                     </property>
                     <property name="value">
-                     <double>0.059600000000000</double>
+                     <double>0.020017000000000</double>
                     </property>
                    </widget>
                   </item>
                   <item row="3" column="1">
                    <widget class="QDoubleSpinBox" name="dsb_m_t_b3">
                     <property name="decimals">
-                     <number>4</number>
+                     <number>6</number>
                     </property>
                     <property name="maximum">
                      <double>10000.000000000000000</double>
                     </property>
                     <property name="value">
-                     <double>1.644400000000000</double>
+                     <double>1.010469000000000</double>
                     </property>
                    </widget>
                   </item>
                   <item row="3" column="2">
                    <widget class="QDoubleSpinBox" name="dsb_m_t_c3">
                     <property name="decimals">
-                     <number>4</number>
+                     <number>6</number>
                     </property>
                     <property name="maximum">
                      <double>10000.000000000000000</double>
                     </property>
                     <property name="value">
-                     <double>147.468799999999987</double>
+                     <double>103.560653000000002</double>
                     </property>
                    </widget>
                   </item>

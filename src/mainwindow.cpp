@@ -23,16 +23,20 @@ main_window::main_window(QWidget* parent)
   ui->gv_canvas->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   ui->gv_canvas->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+  std::array<double, 3> b{ 1.03961212, 0.231792344, 1.01046945 };
+  std::array<double, 3> c{ 6.00069867 * 10e-3,
+                           2.00179144 * 10e-2,
+                           1.03560653 * 10e2 };
+  auto tex_trans = make_shared<dielectric>(b, c);
   auto tex_checker = make_shared<lambertian>(
     make_shared<checker_texture>(color(0, 0, 0), color(1, 1, 1)));
   auto tex_metall = make_shared<metal>(color(0.8, 0.6, 0.2), 0.0);
-  auto tex_trans = make_shared<dielectric>(1.8);
   auto tex_met_r =
     make_shared<lambertian>(make_shared<solid_color>(color(0.8, 0.6, 0.2)));
   auto tex_met_l = make_shared<metal>(color(0.1, 0.2, 0.5), 0.1);
 
   world_.add(make_shared<sphere>(point3{ 0, -101, 0 }, 100, tex_checker));
-  world_.add(make_shared<sphere>(point3{ 0, 2, 1 }, 1, tex_trans));
+  world_.add(make_shared<sphere>(point3{ 0, 1, 0 }, 1, tex_trans));
   world_.add(make_shared<sphere>(point3{ 2, 0, 0 }, 1, tex_met_r));
   world_.add(make_shared<sphere>(point3{ -2, 0, 0 }, 1, tex_met_l));
 
@@ -76,7 +80,8 @@ main_window::on_pb_draw_clicked()
 
   settings_render rs{ static_cast<unsigned int>(ui->gv_canvas->width()),
                       static_cast<unsigned int>(ui->gv_canvas->height()),
-                      ray_pp };
+                      ray_pp,
+                      ui->dsb_cc_d->value() };
 
   BOOST_LOG_TRIVIAL(info) << "Canvas: " << rs.width_ << 'x' << rs.height_
                           << "; ray_pp: " << rs.ray_pp_;
@@ -138,7 +143,18 @@ main_window::on_pb_add_object_clicked()
       auto material = std::make_shared<metal>(c, 0.0);
       obj = std::make_shared<sphere>(center, radius, material);
     } else if (ui->rb_no_m_trans->isChecked()) {
-      auto material = std::make_shared<dielectric>(1.8);
+      double b1 = ui->dsb_m_t_b1->value();
+      double b2 = ui->dsb_m_t_b2->value();
+      double b3 = ui->dsb_m_t_b3->value();
+      double c1 = ui->dsb_m_t_c1->value();
+      double c2 = ui->dsb_m_t_c2->value();
+      double c3 = ui->dsb_m_t_c3->value();
+
+      std::array<double, 3> b{ b1, b2, b3 };
+      std::array<double, 3> c{ c1, c2, c3 };
+
+      auto material = std::make_shared<dielectric>(b, c);
+
       obj = std::make_shared<sphere>(center, radius, material);
 
       BOOST_LOG_TRIVIAL(info) << "Transparent checked";

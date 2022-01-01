@@ -90,8 +90,9 @@ public:
 class dielectric : public material
 {
 public:
-  dielectric(double index_of_refraction)
-    : ir(index_of_refraction)
+  dielectric(std::array<double, 3> b, std::array<double, 3> c)
+    : b_{ b }
+    , c_{ c }
   {}
 
 #define RA 0.01
@@ -102,15 +103,28 @@ public:
                        ray& scattered) const override
   {
     attenuation = color(1.0, 1.0, 1.0);
-    auto ir_tmp = ir;
+    double ray_len = 0.0;
+    char color = 'a';
     if (r_in.rgb_ == RGB::R) {
-      ir_tmp += RA + (rand() / double(RAND_MAX) - 0.5) * RA;
+      color = 'r';
+      // 630-780
+      ray_len = 630 + rand() % (780 - 630);
     } else if (r_in.rgb_ == RGB::B) {
-      ir_tmp += -RA + (rand() / double(RAND_MAX) - 0.5) * RA;
+      color = 'b';
+      // 450-480
+      ray_len = 450 + rand() % (480 - 450);
     } else {
-      ir_tmp += 0 + (rand() / double(RAND_MAX) - 0.5) * RA;
+      color = 'g';
+      // 510-550
+      ray_len = 510 + rand() % (550 - 510);
     }
-    double refraction_ratio = rec.front_face ? (1.0 / ir_tmp) : ir_tmp;
+    ray_len /= 1e2;
+
+    auto n =
+      std::sqrt(1 + (b_[0] * ray_len * ray_len) / (ray_len * ray_len - c_[0]) +
+                (b_[1] * ray_len * ray_len) / (ray_len * ray_len - c_[1]) +
+                (b_[2] * ray_len * ray_len) / (ray_len * ray_len - c_[2]));
+    double refraction_ratio = rec.front_face ? (1.0 / n) : n;
 
     vec3 unit_direction = unit_vector(r_in.direction());
     double cos_theta = fmin(dot(-unit_direction, rec.normal), 1.0);
@@ -133,7 +147,8 @@ public:
   std::string about() const override { return "dielectric"; }
 
 public:
-  double ir; // Index of Refraction
+  std::array<double, 3> b_;
+  std::array<double, 3> c_;
 
 private:
   static double reflectance(double cosine, double ref_idx)
