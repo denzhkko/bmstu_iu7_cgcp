@@ -148,7 +148,11 @@ main()
   materials.push_back(make_shared<lambertian>(
     make_shared<checker_texture>(color(0, 0, 0), color(1, 1, 1))));
   materials.push_back(make_shared<metal>(color(0.8, 0.6, 0.2), 0.0));
-  materials.push_back(make_shared<dielectric>(1.8));
+  std::array<double, 3> b{ 1.03961212, 0.231792344, 1.01046945 };
+  std::array<double, 3> c{ 6.00069867 * 10e-3,
+                           2.00179144 * 10e-2,
+                           1.03560653 * 10e2 };
+  materials.push_back(make_shared<dielectric>(b, c));
   materials.push_back(
     make_shared<lambertian>(make_shared<solid_color>(color(0.8, 0.6, 0.2))));
   materials.push_back(make_shared<metal>(color(0.1, 0.2, 0.5), 0.1));
@@ -173,7 +177,7 @@ main()
     for (auto [width, height] : img_sizes) {
       BOOST_LOG_TRIVIAL(info) << "image size: " << width << "x" << height;
 
-      settings_render settings{ width, height, 10 };
+      settings_render settings{ width, height, 10, 2 };
 
       auto start = std::chrono::steady_clock::now();
       QImage img = render(settings, scene);
