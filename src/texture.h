@@ -7,7 +7,7 @@ class texture
 public:
   virtual color value(double u, double v, const point3& p) const = 0;
 
-  virtual std::string about() { return "no terture info"; }
+  virtual std::string about() { return "Нет информации о текстуре"; }
 };
 
 class solid_color : public texture
@@ -27,7 +27,7 @@ public:
     return color_value;
   }
 
-  std::string about() override { return "solid_color"; }
+  std::string about() override { return "Одноцветный"; }
 
 private:
   color color_value;
@@ -57,7 +57,7 @@ public:
       return even->value(u, v, p);
   }
 
-  std::string about() override { return "checker"; }
+  std::string about() override { return "Клетчатый"; }
 
 public:
   shared_ptr<texture> odd;

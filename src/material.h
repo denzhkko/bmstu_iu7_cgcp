@@ -20,7 +20,7 @@ public:
                        color& attenuation,
                        ray& scattered) const = 0;
 
-  virtual std::string about() const { return "no material info"; }
+  virtual std::string about() const { return "нет информации по материалу"; }
 };
 
 class lambertian : public material
@@ -52,7 +52,7 @@ public:
 
   std::string about() const override
   {
-    return QString("labmerian (texture: %1)")
+    return QString("матовый (текстура: %1)")
       .arg(QString::fromStdString(albedo->about()))
       .toStdString();
   }
@@ -80,7 +80,7 @@ public:
     return (dot(scattered.direction(), rec.normal) > 0);
   }
 
-  std::string about() const override { return "metall"; }
+  std::string about() const override { return "металл"; }
 
 public:
   color albedo;
@@ -144,7 +144,7 @@ public:
     return true;
   }
 
-  std::string about() const override { return "dielectric"; }
+  std::string about() const override { return "прозрачный"; }
 
 public:
   std::array<double, 3> b_;
@@ -184,7 +184,7 @@ public:
     return emitt->value(u, v, p);
   }
 
-  std::string about() const override { return "diffuse_light"; }
+  std::string about() const override { return "источник света"; }
 
 public:
   shared_ptr<texture> emitt;

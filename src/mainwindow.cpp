@@ -46,7 +46,7 @@ main_window::main_window(QWidget* parent)
 void
 main_window::on_pb_draw_clicked()
 {
-  pd_rend_ptr = std::make_unique<QProgressDialog>("Rendering", "Stop", 0, 100);
+  pd_rend_ptr = std::make_unique<QProgressDialog>("Генерация", "Остановить", 0, 100);
   pd_rend_ptr->setMinimumDuration(0);
   pd_rend_ptr->show();
 
@@ -106,73 +106,66 @@ main_window::on_pb_add_object_clicked()
     std::make_shared<sphere>(point3{ 0, 0, 0 }, 5, def_material);
 
   // Choosing figure
-  if (ui->rb_no_f_schere->isChecked()) {
-    point3 center{ ui->dsb_no_f_s_c_x->value(),
-                   ui->dsb_no_f_s_c_y->value(),
-                   ui->dsb_no_f_s_c_z->value() };
-    double radius = ui->dsb_no_f_s_r->value();
+  point3 center{ ui->dsb_no_f_s_c_x->value(),
+                 ui->dsb_no_f_s_c_y->value(),
+                 ui->dsb_no_f_s_c_z->value() };
+  double radius = ui->dsb_no_f_s_r->value();
 
-    BOOST_LOG_TRIVIAL(info) << "Schere checked";
+  BOOST_LOG_TRIVIAL(info) << "Schere checked";
 
-    if (ui->rb_no_m_matte->isChecked()) {
-      BOOST_LOG_TRIVIAL(info) << "Matte checked";
+  if (ui->rb_no_m_matte->isChecked()) {
+    BOOST_LOG_TRIVIAL(info) << "Matte checked";
 
-      if (ui->rb_no_m_m_t_solid->isChecked()) {
-        BOOST_LOG_TRIVIAL(info) << "Solid checked";
+    if (ui->rb_no_m_m_t_solid->isChecked()) {
+      BOOST_LOG_TRIVIAL(info) << "Solid checked";
 
-        color c = to_color(ui->cp_no_m_m_t_s->color());
+      color c = to_color(ui->cp_no_m_m_t_s->color());
 
-        auto material = make_shared<lambertian>(make_shared<solid_color>(c));
-        obj = std::make_shared<sphere>(center, radius, material);
-      } else if (ui->rb_no_m_m_t_checker->isChecked()) {
-        BOOST_LOG_TRIVIAL(info) << "Checker checked";
-
-        color c1 = to_color(ui->cp_no_m_m_t_c1->color());
-        color c2 = to_color(ui->cp_no_m_m_t_c1->color());
-
-        auto material =
-          make_shared<lambertian>(make_shared<checker_texture>(c1, c2));
-        obj = std::make_shared<sphere>(center, radius, material);
-      } else {
-        BOOST_LOG_TRIVIAL(error) << "Texture not checked";
-      }
-    } else if (ui->rb_no_m_metal->isChecked()) {
-      BOOST_LOG_TRIVIAL(info) << "Metall checked";
-
-      color c = to_color(ui->cp_no_m_me_t_s->color());
-      auto material = std::make_shared<metal>(c, 0.0);
+      auto material = make_shared<lambertian>(make_shared<solid_color>(c));
       obj = std::make_shared<sphere>(center, radius, material);
-    } else if (ui->rb_no_m_trans->isChecked()) {
-      double b1 = ui->dsb_m_t_b1->value();
-      double b2 = ui->dsb_m_t_b2->value();
-      double b3 = ui->dsb_m_t_b3->value();
-      double c1 = ui->dsb_m_t_c1->value();
-      double c2 = ui->dsb_m_t_c2->value();
-      double c3 = ui->dsb_m_t_c3->value();
+    } else if (ui->rb_no_m_m_t_checker->isChecked()) {
+      BOOST_LOG_TRIVIAL(info) << "Checker checked";
 
-      std::array<double, 3> b{ b1, b2, b3 };
-      std::array<double, 3> c{ c1, c2, c3 };
+      color c1 = to_color(ui->cp_no_m_m_t_c1->color());
+      color c2 = to_color(ui->cp_no_m_m_t_c1->color());
 
-      auto material = std::make_shared<dielectric>(b, c);
-
-      obj = std::make_shared<sphere>(center, radius, material);
-
-      BOOST_LOG_TRIVIAL(info) << "Transparent checked";
-    } else if (ui->rb_no_m_light->isChecked()) {
-      BOOST_LOG_TRIVIAL(info) << "Light checked";
-
-      color c = to_color(ui->cp_no_m_l_c->color());
-
-      auto material = std::make_shared<diffuse_light>(c);
+      auto material =
+        make_shared<lambertian>(make_shared<checker_texture>(c1, c2));
       obj = std::make_shared<sphere>(center, radius, material);
     } else {
-      BOOST_LOG_TRIVIAL(error) << "Material not checked";
+      BOOST_LOG_TRIVIAL(error) << "Texture not checked";
     }
+  } else if (ui->rb_no_m_metal->isChecked()) {
+    BOOST_LOG_TRIVIAL(info) << "Metall checked";
 
-  } else if (ui->rb_no_f_box->isChecked()) {
-    BOOST_LOG_TRIVIAL(info) << "Box checked";
+    color c = to_color(ui->cp_no_m_me_t_s->color());
+    auto material = std::make_shared<metal>(c, 0.0);
+    obj = std::make_shared<sphere>(center, radius, material);
+  } else if (ui->rb_no_m_trans->isChecked()) {
+    double b1 = ui->dsb_m_t_b1->value();
+    double b2 = ui->dsb_m_t_b2->value();
+    double b3 = ui->dsb_m_t_b3->value();
+    double c1 = ui->dsb_m_t_c1->value();
+    double c2 = ui->dsb_m_t_c2->value();
+    double c3 = ui->dsb_m_t_c3->value();
+
+    std::array<double, 3> b{ b1, b2, b3 };
+    std::array<double, 3> c{ c1, c2, c3 };
+
+    auto material = std::make_shared<dielectric>(b, c);
+
+    obj = std::make_shared<sphere>(center, radius, material);
+
+    BOOST_LOG_TRIVIAL(info) << "Transparent checked";
+  } else if (ui->rb_no_m_light->isChecked()) {
+    BOOST_LOG_TRIVIAL(info) << "Light checked";
+
+    color c = to_color(ui->cp_no_m_l_c->color());
+
+    auto material = std::make_shared<diffuse_light>(c);
+    obj = std::make_shared<sphere>(center, radius, material);
   } else {
-    BOOST_LOG_TRIVIAL(error) << "Figure not checked";
+    BOOST_LOG_TRIVIAL(error) << "Material not checked";
   }
 
   world_.add(obj);

@@ -32,7 +32,7 @@ public:
                    hit_record& rec) const = 0;
   virtual bool bounding_box(aabb& output_box) const = 0;
 
-  virtual std::string about() const { return "No info about object"; }
+  virtual std::string about() const { return "Нет информации по объету"; }
 };
 
 class translate : public hittable

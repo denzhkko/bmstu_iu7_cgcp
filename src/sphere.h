@@ -20,7 +20,7 @@ public:
 
   std::string about() const override
   {
-    return QString{ "Sphere center (%1, %2, %3), r = %4; Material: %5" }
+    return QString{ "Шар с центром (%1, %2, %3), r = %4; Материал: %5" }
       .arg(center.e[0])
       .arg(center.e[1])
       .arg(center.e[2])
