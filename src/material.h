@@ -118,7 +118,7 @@ public:
       // 510-550
       ray_len = 510 + rand() % (550 - 510);
     }
-    ray_len /= 1e2;
+    ray_len /= 1e3;
 
     auto n =
       std::sqrt(1 + (b_[0] * ray_len * ray_len) / (ray_len * ray_len - c_[0]) +

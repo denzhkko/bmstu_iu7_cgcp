@@ -24,9 +24,9 @@ main_window::main_window(QWidget* parent)
   ui->gv_canvas->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
   std::array<double, 3> b{ 1.03961212, 0.231792344, 1.01046945 };
-  std::array<double, 3> c{ 6.00069867 * 10e-3,
-                           2.00179144 * 10e-2,
-                           1.03560653 * 10e2 };
+  std::array<double, 3> c{ 6.00069867 * 1e-3,
+                           2.00179144 * 1e-2,
+                           1.03560653 * 1e2 };
   auto tex_trans = make_shared<dielectric>(b, c);
   auto tex_checker = make_shared<lambertian>(
     make_shared<checker_texture>(color(0, 0, 0), color(1, 1, 1)));
@@ -46,7 +46,8 @@ main_window::main_window(QWidget* parent)
 void
 main_window::on_pb_draw_clicked()
 {
-  pd_rend_ptr = std::make_unique<QProgressDialog>("Генерация", "Остановить", 0, 100);
+  pd_rend_ptr =
+    std::make_unique<QProgressDialog>("Генерация", "Остановить", 0, 100);
   pd_rend_ptr->setMinimumDuration(0);
   pd_rend_ptr->show();
 
