@@ -312,7 +312,7 @@
 		\titlepageauthors{#4}{#5}{Руководитель курсовой работы}{#6}{#7}{#8}{}
 		\vspace{14mm}
 		
-		\textit{{\the\year} г.}
+		\textit{{2021} г.}
 	\end{titlepage}
 	
 	\setcounter{page}{2}
